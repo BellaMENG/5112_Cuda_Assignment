@@ -6,9 +6,9 @@
 #include <iostream>
 #include <string>
 #include "split_interpolation.hpp"
-//#include "cheating_split_interpolation.hpp"
 
 using namespace boost::python;
+using namespace std;
 
 char const* foo(int x, int y) {return "foo";}
 
@@ -104,11 +104,11 @@ boost::python::list decrypt_px(boost::python::list x_list, boost::python::list y
 
 BOOST_PYTHON_MODULE(ssss)
 {
-    def("foo", foo, args("x", "y"), "foo's docstring");
-    def("encrypt_str", encrypt_str, args("secret", "intercept", "degree"), "encrypt_function");
-    def("decrypt_str", decrypt_str, args("shares", "degree"), "decrypt_function");
-    def("encrypt_str_cheating", encrypt_str_cheating, args("secret", "intercept", "degree"), "encrypt_function with cheating detection");
-    def("decrypt_str_cheating", decrypt_str_cheating, args("shares_f", "shares_f", "degree"), "decrypt_function with cd");
-    def("encrypt_int_px", encrypt_int_px, args("pixels_list, intercept, degree"), "encrypt pixels");
-    def("decrypt_px", decrypt_px, args("x_list", "y_list", "degree"), "decrypt image");
+    boost::python::def("foo", foo, boost::python::args("x", "y"), "foo's docstring");
+    boost::python::def("encrypt_str", encrypt_str, boost::python::args("secret", "intercept", "degree"), "encrypt_function");
+    boost::python::def("decrypt_str", decrypt_str, boost::python::args("shares", "degree"), "decrypt_function");
+    boost::python::def("encrypt_str_cheating", encrypt_str_cheating, boost::python::args("secret", "intercept", "degree"), "encrypt_function with cheating detection");
+    boost::python::def("decrypt_str_cheating", decrypt_str_cheating, boost::python::args("shares_f", "shares_f", "degree"), "decrypt_function with cd");
+    boost::python::def("encrypt_int_px", encrypt_int_px, boost::python::args("pixels_list, intercept, degree"), "encrypt pixels");
+    boost::python::def("decrypt_px", decrypt_px, boost::python::args("x_list", "y_list", "degree"), "decrypt image");
 }

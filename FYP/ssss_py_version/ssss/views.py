@@ -6,7 +6,7 @@ from werkzeug.utils import secure_filename
 from PIL import Image
 import numpy as np
 import sys
-sys.path.insert(1,"/Users/zmeng/Documents/FYP/ssss_py_version/ssss/cpp_code/build/lib.macosx-10.9-x86_64-3.8/")
+sys.path.insert(1,"/Users/zmeng/Documents/FYP/ssss_py_version/ssss/cpp_code/build/lib.macosx-10.15-x86_64-3.7")
 from fetch_data import fetch_shares, fetch_shares_cheating, fetch_secret, fetch_shares_arr, fetch_secret_cheating, fetch_shares_px, fetch_secret_px
 
 
