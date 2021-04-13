@@ -2,6 +2,15 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:minimum_dup.cpp">
+   </FileRef>
+   <FileRef
+      location = "group:union_find.cpp">
+   </FileRef>
+   <FileRef
+      location = "group:union_find.hpp">
+   </FileRef>
+   <FileRef
       location = "group:clustering_pthread_skeleton.cpp">
    </FileRef>
    <FileRef
