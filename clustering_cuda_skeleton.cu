@@ -8,10 +8,17 @@
 
 // Define variables or functions here
 
+__global__
+void findPivots() {
+    
+}
+
 void cuda_scan(int num_vs, int num_es, int *nbr_offs, int *nbrs,
         float epsilon, int mu, int num_blocks_per_grid, int num_threads_per_block,
         int &num_clusters, int *cluster_result) {
 
     // Fill in the cuda_scan function here
+    dim3 blocks(num_blocks_per_grid);
+    dim3 threads(num_threads_per_block);
     
 }
