@@ -21,7 +21,7 @@ void findPivots(int num_vs, int num_es, float ep, int mu, int* d_nbr_offs, int* 
         int *left_end = &d_nbrs[d_nbr_offs[i + 1]];
         int left_size = left_end - left_start;
         
-        sim_nbrs[i] = new int[left_size];
+        d_sim_nbrs[i] = new int[left_size];
         // loop over all neighbors of i
         for (int *j = left_start; j < left_end; j++) {
             int nbr_id = *j;
@@ -40,8 +40,8 @@ void findPivots(int num_vs, int num_es, float ep, int mu, int* d_nbr_offs, int* 
                 d_num_sim_nbrs[i]++;
             }
         }
-        if (num_sim_nbrs[i] > global_mu) {
-            pivots[i] = true;
+        if (num_sim_nbrs[i] > mu) {
+            d_pivots[i] = true;
         }
     }
 }
