@@ -12,8 +12,26 @@
 
 // Define variables or functions here
 
+int get_num_com_nbrs(int *nbrs, int left_start, int left_end, int right_start, int right_end) {
+    int left_pos = left_start, right_pos = right_start, num_com_nbrs = 0;
+
+    while (left_pos < left_end && right_pos < right_end) {
+        if (nbrs[left_pos] == nbrs[right_pos]) {
+            num_com_nbrs++;
+            left_pos++;
+            right_pos++;
+        } else if (nbrs[left_pos] < nbrs[right_pos]) {
+            left_pos++;
+        } else {
+            right_pos++;
+        }
+    }
+    return num_com_nbrs;
+}
+
+
 __global__
-void findPivots(int num_vs, int num_es, float ep, int mu, int* d_nbr_offs, int* d_nbrs, int* d_pivots, int* d_num_sim_nbrs, int* d_sim_nbrs) {
+void findPivots(int num_vs, int num_es, float ep, int mu, int* d_nbr_offs, int* d_nbrs, int* d_pivots, int* d_num_sim_nbrs, int** d_sim_nbrs) {
     int tid = blockDim.x * blockIdx.x + threadIdx.x;
     int element_skip = blockDim.x * gridDim.x;
     for (int i = tid; i < num_vs; i += element_skip) {
@@ -31,7 +49,7 @@ void findPivots(int num_vs, int num_es, float ep, int mu, int* d_nbr_offs, int* 
             int right_size = right_end - right_start;
             
             // compute the similarity
-            int num_com_nbrs = get_num_com_nbrs(left_start, left_end, right_start, right_end);
+            int num_com_nbrs = get_num_com_nbrs(d_nbrs, left_start, left_end, right_start, right_end);
             
             float sim = (num_com_nbrs + 2) / std::sqrt((left_size + 1.0) * (right_size + 1.0));
             
@@ -40,7 +58,7 @@ void findPivots(int num_vs, int num_es, float ep, int mu, int* d_nbr_offs, int* 
                 d_num_sim_nbrs[i]++;
             }
         }
-        if (num_sim_nbrs[i] > mu) {
+        if (d_num_sim_nbrs[i] > mu) {
             d_pivots[i] = true;
         }
     }
