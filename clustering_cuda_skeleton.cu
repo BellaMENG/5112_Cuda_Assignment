@@ -13,8 +13,37 @@
 // Define variables or functions here
 
 __global__
-void findPivots(int num_vs, int num_es) {
-    
+void findPivots(int num_vs, int num_es, int* d_nbr_offs, int* d_nbrs, int* d_pivots, int* d_num_sim_nbrs, int* d_sim_nbrs) {
+    int tid = blockDim.x * blockIdx.x + threadIdx.x;
+    int element_skip = blockDim.x * gridDim.x;
+    for (int i = tid; i < num_vs; i += element_skip) {
+        int *left_start = &global_nbrs[global_nbr_offs[i]];
+        int *left_end = &global_nbrs[global_nbr_offs[i + 1]];
+        int left_size = left_end - left_start;
+        
+        sim_nbrs[i] = new int[left_size];
+        // loop over all neighbors of i
+        for (int *j = left_start; j < left_end; j++) {
+            int nbr_id = *j;
+            
+            int *right_start = &global_nbrs[global_nbr_offs[nbr_id]];
+            int *right_end = &global_nbrs[global_nbr_offs[nbr_id + 1]];
+            int right_size = right_end - right_start;
+            
+            // compute the similarity
+            int num_com_nbrs = get_num_com_nbrs(left_start, left_end, right_start, right_end);
+            
+            float sim = (num_com_nbrs + 2) / std::sqrt((left_size + 1.0) * (right_size + 1.0));
+            
+            if (sim > global_epsilon) {
+                sim_nbrs[i][num_sim_nbrs[i]] = nbr_id;
+                num_sim_nbrs[i]++;
+            }
+        }
+        if (num_sim_nbrs[i] > global_mu) {
+            pivots[i] = true;
+        }
+    }
 }
 
 void cuda_scan(int num_vs, int num_es, int *nbr_offs, int *nbrs,
@@ -22,8 +51,6 @@ void cuda_scan(int num_vs, int num_es, int *nbr_offs, int *nbrs,
         int &num_clusters, int *cluster_result) {
 
     // Fill in the cuda_scan function here
-    dim3 blocks(num_blocks_per_grid);
-    dim3 threads(num_threads_per_block);
     
     // two steps: 1. find the pivots; 2. cluster and label the results
     int* d_nbr_offs, d_nbrs;
@@ -59,6 +86,10 @@ void cuda_scan(int num_vs, int num_es, int *nbr_offs, int *nbrs,
     h_sim_nbrs = (int**)malloc(size_sim);
     cudaMalloc(&d_sim_nbrs, size_sim);
     
+    dim3 blocks(num_blocks_per_grid);
+    dim3 threads(num_threads_per_block);
+
+    findPivots<<<blocks, threads>>>(num_vs, num_es, d_nbr_offs, d_nbrs, d_pivots, d_num_sim_nbrs, d_sim_nbrs);
     // copy parameters from host to device
     cudaMemcpy(d_nbr_offs, nbr_offs, size_offs, cudaMemcpyHostToDevice);
     cudaMemcpy(d_nbrs, nbrs, size_nbrs, cudaMemcpyHostToDevice);
