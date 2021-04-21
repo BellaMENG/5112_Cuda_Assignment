@@ -37,7 +37,8 @@ void findPivots(int num_blocks_per_grid, int num_threads_per_block, int num_vs, 
     int tid = blockDim.x * blockIdx.x + threadIdx.x;
     int element_skip = blockDim.x * gridDim.x;
 #if __CUDA_ARCH__>=200
-    printf("index: %d\n", tid);
+    if (tid < 17)
+        printf("index: %d\n", tid);
 #endif
     for (int i = tid; i < num_vs; i += element_skip) {
         int left_start = d_nbrs[d_nbr_offs[i]];
