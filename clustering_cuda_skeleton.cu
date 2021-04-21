@@ -12,7 +12,7 @@
 
 // Define variables or functions here
 
-__global__
+__device__
 int get_num_com_nbrs(int *nbrs, int left_start, int left_end, int right_start, int right_end) {
     int left_pos = left_start, right_pos = right_start, num_com_nbrs = 0;
 
