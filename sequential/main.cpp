@@ -87,6 +87,22 @@ int main(int argc, char **argv) {
         if (num_sim_nbrs[i] > mu) pivots[i] = true;
     }
 
+    // for debug
+    if (num_vs <= 50) {
+        for (int i = 0; i < num_vs; ++i) {
+            std::cout << pivots[i] << " ";
+        }
+        cout << endl;
+        for (int i = 0; i < num_vs; ++i) {
+            std::cout << "node " << i << ": ";
+            for (int j = 0; j < num_sim_nbrs[i]; ++j) {
+                std::cout << sim_nbrs[i][j] << " ";
+            }
+            cout << endl;
+        }
+
+    }
+    
     // Stage 2:
     bool *visited = new bool[num_vs]();
     for (int i = 0; i < num_vs; i++) {

@@ -113,6 +113,23 @@ void cuda_scan(int num_vs, int num_es, int *nbr_offs, int *nbrs,
     cudaMemcpy(h_pivots, d_pivots, size_pivots, cudaMemcpyDeviceToHost);
     cudaMemcpy(h_num_sim_nbrs, d_num_sim_nbrs, size_num, cudaMemcpyDeviceToHost);
     cudaMemcpy(h_sim_nbrs, d_sim_nbrs, size_nbrs, cudaMemcpyDeviceToHost);
+    
+    // for debug
+    if (num_vs <= 50) {
+        for (int i = 0; i < num_vs; ++i) {
+            std::cout << h_pivots[i] << " ";
+        }
+        cout << endl;
+        for (int i = 0; i < num_vs; ++i) {
+            std::cout << "node " << i << ": ";
+            for (int j = 0; j < h_num_sim_nbrs[i]; ++j) {
+                std::cout << h_sim_nbrs[i][j] << " ";
+            }
+            cout << endl;
+        }
+
+    }
+
     // copy parameters from host to device
     cudaMemcpy(d_nbr_offs, nbr_offs, size_offs, cudaMemcpyHostToDevice);
     cudaMemcpy(d_nbrs, nbrs, size_nbrs, cudaMemcpyHostToDevice);
