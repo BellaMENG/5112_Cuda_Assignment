@@ -52,7 +52,10 @@ void findPivots(int num_blocks_per_grid, int num_threads_per_block, int num_vs, 
             
             // compute the similarity
             int num_com_nbrs = get_num_com_nbrs(d_nbrs, left_start, left_end, right_start, right_end);
-            
+#if __CUDA_ARCH__>=200
+            printf("index: %d, num_com_nbrs: %d \n", i, num_com_nbrs);
+#endif
+
             float sim = (num_com_nbrs + 2) / std::sqrt((left_size + 1.0) * (right_size + 1.0));
             
             if (sim > ep) {
