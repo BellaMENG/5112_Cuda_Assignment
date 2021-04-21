@@ -35,17 +35,17 @@ void findPivots(int num_vs, int num_es, float ep, int mu, int* d_nbr_offs, int* 
     int tid = blockDim.x * blockIdx.x + threadIdx.x;
     int element_skip = blockDim.x * gridDim.x;
     for (int i = tid; i < num_vs; i += element_skip) {
-        int *left_start = &d_nbrs[d_nbr_offs[i]];
-        int *left_end = &d_nbrs[d_nbr_offs[i + 1]];
+        int left_start = d_nbrs[d_nbr_offs[i]];
+        int left_end = d_nbrs[d_nbr_offs[i + 1]];
         int left_size = left_end - left_start;
         
         d_sim_nbrs[i] = new int[left_size];
         // loop over all neighbors of i
-        for (int *j = left_start; j < left_end; j++) {
-            int nbr_id = *j;
+        for (int j = left_start; j < left_end; j++) {
+            int nbr_id = d_nbrs[j];
             
-            int *right_start = &d_nbrs[d_nbr_offs[nbr_id]];
-            int *right_end = &d_nbrs[d_nbr_offs[nbr_id + 1]];
+            int right_start = d_nbr_offs[nbr_id];
+            int right_end = d_nbr_offs[nbr_id + 1];
             int right_size = right_end - right_start;
             
             // compute the similarity
