@@ -109,6 +109,10 @@ void cuda_scan(int num_vs, int num_es, int *nbr_offs, int *nbrs,
     dim3 threads(num_threads_per_block);
 
     findPivots<<<blocks, threads>>>(num_blocks_per_grid, num_threads_per_block, num_vs, num_es, epsilon, mu, d_nbr_offs, d_nbrs, d_pivots, d_num_sim_nbrs, d_sim_nbrs);
+    // copy the pivots results back from the device
+    cudaMemcpy(h_pivots, d_pivots, size_pivots, cudaMemcpyDeviceToHost);
+    cudaMemcpy(h_num_sim_nbrs, d_num_sim_nbrs, size_num, cudaMemcpyDeviceToHost);
+    cudaMemcpy(h_sim_nbrs, d_sim_nbrs, size_nbrs, cudaMemcpyDeviceToHost);
     // copy parameters from host to device
     cudaMemcpy(d_nbr_offs, nbr_offs, size_offs, cudaMemcpyHostToDevice);
     cudaMemcpy(d_nbrs, nbrs, size_nbrs, cudaMemcpyHostToDevice);
