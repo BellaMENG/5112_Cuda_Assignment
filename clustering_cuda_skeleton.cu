@@ -50,9 +50,7 @@ void findPivots(int num_blocks_per_grid, int num_threads_per_block, int num_vs, 
             int right_size = right_end - right_start;
             
             // compute the similarity
-            dim3 blocks(num_blocks_per_grid);
-            dim3 threads(num_threads_per_block);
-            int num_com_nbrs = get_num_com_nbrs<<<blocks, threads>>>(d_nbrs, left_start, left_end, right_start, right_end);
+            int num_com_nbrs = get_num_com_nbrs(d_nbrs, left_start, left_end, right_start, right_end);
             
             float sim = (num_com_nbrs + 2) / std::sqrt((left_size + 1.0) * (right_size + 1.0));
             
