@@ -78,7 +78,6 @@ int main(int argc, char **argv) {
             int num_com_nbrs = get_num_com_nbrs(nbrs, left_start, left_end, right_start, right_end);
             printf("index: %d, num_com_nbrs: %d \n", i, num_com_nbrs);
             float sim = (num_com_nbrs + 2) / std::sqrt((left_size + 1.0) * (right_size + 1.0));
-            print("index: %d, num_com_nbrs: %d \n", i, num_com_nbrs)
             if (sim > epsilon) {
                 sim_nbrs[i][num_sim_nbrs[i]] = nbr_id;
                 num_sim_nbrs[i]++;
