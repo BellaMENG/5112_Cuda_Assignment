@@ -29,9 +29,9 @@ int get_num_com_nbrs(int *nbrs, int left_start, int left_end, int right_start, i
     return num_com_nbrs;
 }
 
-
+// findPivots<<<blocks, threads>>>(num_vs, num_es, epsilon, mu, d_nbr_offs, d_nbrs, d_pivots, d_num_sim_nbrs, d_sim_nbrs);
 __global__
-void findPivots(int num_vs, int num_es, float ep, int mu, int* d_nbr_offs, int* d_nbrs, int* d_pivots, int* d_num_sim_nbrs, int** d_sim_nbrs) {
+void findPivots(int num_vs, int num_es, float ep, int mu, int* d_nbr_offs, int* d_nbrs, bool* d_pivots, int* d_num_sim_nbrs, int** d_sim_nbrs) {
     int tid = blockDim.x * blockIdx.x + threadIdx.x;
     int element_skip = blockDim.x * gridDim.x;
     for (int i = tid; i < num_vs; i += element_skip) {
@@ -71,13 +71,13 @@ void cuda_scan(int num_vs, int num_es, int *nbr_offs, int *nbrs,
     // Fill in the cuda_scan function here
     
     // two steps: 1. find the pivots; 2. cluster and label the results
-    int* d_nbr_offs, d_nbrs;
+    int* d_nbr_offs, *d_nbrs;
     int* d_cluster_result;
     
     // declare all of the variabled that will be used
-    bool* h_pivots, d_pivots;
-    int* h_num_sim_nbrs, d_num_sim_nbrs;
-    int** h_sim_nbrs, d_sim_nbrs;
+    bool* h_pivots, *d_pivots;
+    int* h_num_sim_nbrs, *d_num_sim_nbrs;
+    int** h_sim_nbrs, **d_sim_nbrs;
     
     // malloc for host and device variables
     size_t size_offs = (num_vs+1) * sizeof(int);
