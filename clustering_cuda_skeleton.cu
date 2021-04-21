@@ -116,6 +116,10 @@ void cuda_scan(int num_vs, int num_es, int *nbr_offs, int *nbrs,
     h_sim_nbrs = (int**)malloc(size_sim);
     cudaMalloc(&d_sim_nbrs, size_sim);
     
+    // copy the parameters to the device
+    cudaMemcpy(d_nbr_offs, nbr_offs, size_offs, cudaMemcpyHostToDevice);
+    cudaMemcpy(d_nbrs, nbrs, size_nbrs, cudaMemcpyHostToDevice);
+    
     dim3 blocks(num_blocks_per_grid);
     dim3 threads(num_threads_per_block);
 
