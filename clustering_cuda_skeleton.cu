@@ -10,6 +10,7 @@
 #include <iostream>
 #include "clustering.h"
 
+using namespace std;
 // Define variables or functions here
 
 __device__
@@ -119,13 +120,13 @@ void cuda_scan(int num_vs, int num_es, int *nbr_offs, int *nbrs,
         for (int i = 0; i < num_vs; ++i) {
             std::cout << h_pivots[i] << " ";
         }
-        cout << endl;
+        std::cout << endl;
         for (int i = 0; i < num_vs; ++i) {
             std::cout << "node " << i << ": ";
             for (int j = 0; j < h_num_sim_nbrs[i]; ++j) {
                 std::cout << h_sim_nbrs[i][j] << " ";
             }
-            cout << endl;
+            std::cout << endl;
         }
 
     }
