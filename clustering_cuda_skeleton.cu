@@ -65,6 +65,9 @@ void findPivots(int num_blocks_per_grid, int num_threads_per_block, int num_vs, 
         }
         if (d_num_sim_nbrs[i] > mu) {
             d_pivots[i] = true;
+#if __CUDA_ARCH__>=200
+            printf("pivots: %d \n", i);
+#endif
         }
     }
 }
