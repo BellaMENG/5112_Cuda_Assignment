@@ -70,6 +70,20 @@ void findPivots(int num_blocks_per_grid, int num_threads_per_block, int num_vs, 
     }
 }
 
+void expansion(int cur_id, int num_clusters, int *nbr_offs, int *num_sim_nbrs, int *sim_nbrs,
+               bool *visited, bool *pivots, int *cluster_result) {
+    
+    for (int i = 0; i < num_sim_nbrs[cur_id]; i++) {
+        int nbr_id = sim_nbrs[nbr_offs[i] + i];
+        if ((pivots[nbr_id])&&(!visited[nbr_id])){
+            visited[nbr_id] = true;
+            cluster_result[nbr_id] = num_clusters;
+            expansion(nbr_id, num_clusters, nbr_offs, num_sim_nbrs, sim_nbrs, visited, pivots,
+                        cluster_result);
+        }
+    }
+}
+
 void cuda_scan(int num_vs, int num_es, int *nbr_offs, int *nbrs,
         float epsilon, int mu, int num_blocks_per_grid, int num_threads_per_block,
         int &num_clusters, int *cluster_result) {
@@ -117,20 +131,16 @@ void cuda_scan(int num_vs, int num_es, int *nbr_offs, int *nbrs,
     dim3 blocks(num_blocks_per_grid);
     dim3 threads(num_threads_per_block);
 
+    // stage 1: find the pivot nodes
     findPivots<<<blocks, threads>>>(num_blocks_per_grid, num_threads_per_block, num_vs, num_es, epsilon, mu, d_nbr_offs, d_nbrs, d_pivots, d_num_sim_nbrs, d_sim_nbrs);
     // copy the pivots results back from the device
     cudaMemcpy(h_pivots, d_pivots, size_pivots, cudaMemcpyDeviceToHost);
     cudaMemcpy(h_num_sim_nbrs, d_num_sim_nbrs, size_num, cudaMemcpyDeviceToHost);
     
     cudaMemcpy(h_sim_nbrs, d_sim_nbrs, size_nbrs, cudaMemcpyDeviceToHost);
-//    cudaMemcpy(h_sim_nbrs, d_sim_nbrs, size_sim, cudaMemcpyDeviceToHost);
-//    for (int i = 0; i < num_vs; ++i) {
-//        int left_size = nbr_offs[i+1]-nbr_offs[i];
-//        h_sim_nbrs[i] = (int*)malloc(left_size*sizeof(int));
-//        cudaMemcpy(&h_sim_nbrs[i], &d_sim_nbrs[i], left_size*sizeof(int), cudaMemcpyDeviceToHost);
-//    }
     
     // for debug
+/*
     if (num_vs <= 50) {
         for (int i = 0; i < num_vs; ++i) {
             std::cout << h_pivots[i] << " ";
@@ -151,8 +161,22 @@ void cuda_scan(int num_vs, int num_es, int *nbr_offs, int *nbrs,
         }
 
     }
+*/
 
-    // copy parameters from host to device
-    cudaMemcpy(d_nbr_offs, nbr_offs, size_offs, cudaMemcpyHostToDevice);
-    cudaMemcpy(d_nbrs, nbrs, size_nbrs, cudaMemcpyHostToDevice);
+    // stage 2: cluster
+    bool *visited = new bool[num_vs]();
+    
+    for (int i = 0; i < num_vs; i++) {
+        if (!h_pivots[i] || visited[i]) continue;
+
+        visited[i] = true;
+        cluster_result[i] = i;
+        expansion(i, i, nbr_offs, h_num_sim_nbrs, h_sim_nbrs, visited, pivots, cluster_result);
+
+        num_clusters++;
+    }
+
+    
+    // free mem allocation
+    
 }
