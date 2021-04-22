@@ -136,31 +136,8 @@ void cuda_scan(int num_vs, int num_es, int *nbr_offs, int *nbrs,
     
     cudaMemcpy(h_sim_nbrs, d_sim_nbrs, size_nbrs, cudaMemcpyDeviceToHost);
     
-    // for debug
-/*
-    if (num_vs <= 50) {
-        for (int i = 0; i < num_vs; ++i) {
-            std::cout << h_pivots[i] << " ";
-        }
-        std::cout << endl;
-        for (int i = 0; i < num_vs; ++i) {
-            std::cout << "node " << i << ": ";
-            cout << "num sim nbrs is " << h_num_sim_nbrs[i];
-            std::cout << endl;
-        }
-        for (int i = 0; i < num_vs; ++i) {
-            std::cout << "node " << i << ": ";
-            int left_start = nbr_offs[i];
-            for (int j = 0; j < h_num_sim_nbrs[i]; ++j) {
-                std::cout << h_sim_nbrs[left_start + j] << " ";
-            }
-            std::cout << endl;
-        }
 
-    }
-*/
-
-    // stage 2: cluster
+    // stage 2: cluster. sequential version
     bool *visited = new bool[num_vs]();
     
     for (int i = 0; i < num_vs; i++) {
@@ -172,12 +149,7 @@ void cuda_scan(int num_vs, int num_es, int *nbr_offs, int *nbrs,
 
         num_clusters++;
     }
-/*
-    for (int i = 0; i < num_vs; ++i) {
-        cout << cluster_result[i] << " ";
-    }
-    cout << endl;
- */
+    
     // free mem allocation
     cudaFree(d_nbr_offs);
     cudaFree(d_nbrs);

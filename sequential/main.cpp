@@ -124,7 +124,7 @@ int main(int argc, char **argv) {
     printf("Elapsed Time: %.9lf s\n", diff.count());
     printf("Number of clusters: %d\n", num_clusters);
 
-    string result_path("results/sequential.txt");
+    string result_path("../results/sequential.txt");
     write_result_to_file(num_vs, num_clusters, cluster_result, result_path);
 
     delete[] pivots;
