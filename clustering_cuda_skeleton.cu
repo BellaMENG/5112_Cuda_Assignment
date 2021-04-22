@@ -43,7 +43,7 @@ void findPivots(int num_blocks_per_grid, int num_threads_per_block, int num_vs, 
         int left_size = left_end - left_start;
 
 //        d_sim_nbrs[i] = new int[left_size];
-        d_sim_mbrs[i] = (int*)malloc(left_size * sizeof(int));
+        d_sim_nbrs[i] = (int*)malloc(left_size * sizeof(int));
         // loop over all neighbors of i
         for (int j = left_start; j < left_end; j++) {
             int nbr_id = d_nbrs[j];
