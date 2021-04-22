@@ -33,7 +33,7 @@ int get_num_com_nbrs(int *nbrs, int left_start, int left_end, int right_start, i
 
 // findPivots<<<blocks, threads>>>(num_vs, num_es, epsilon, mu, d_nbr_offs, d_nbrs, d_pivots, d_num_sim_nbrs, d_sim_nbrs);
 __global__
-void findPivots(int num_blocks_per_grid, int num_threads_per_block, int num_vs, int num_es, float ep, int mu, int* d_nbr_offs, int* d_nbrs, bool* d_pivots, int* d_num_sim_nbrs, int** d_sim_nbrs) {
+void findPivots(int num_blocks_per_grid, int num_threads_per_block, int num_vs, int num_es, float ep, int mu, int* d_nbr_offs, int* d_nbrs, bool* d_pivots, int* d_num_sim_nbrs, int* d_sim_nbrs) {
     int tid = blockDim.x * blockIdx.x + threadIdx.x;
     int element_skip = blockDim.x * gridDim.x;
     
@@ -44,7 +44,8 @@ void findPivots(int num_blocks_per_grid, int num_threads_per_block, int num_vs, 
 
 //        d_sim_nbrs[i] = new int[left_size];
 //        cudaMalloc(&d_sim_nbrs[i], left_size*sizeof(int));
-        d_sim_nbrs[i] = (int*)malloc(left_size * sizeof(int));
+//        d_sim_nbrs[i] = (int*)malloc(left_size * sizeof(int));
+        
         // loop over all neighbors of i
         for (int j = left_start; j < left_end; j++) {
             int nbr_id = d_nbrs[j];
@@ -59,7 +60,7 @@ void findPivots(int num_blocks_per_grid, int num_threads_per_block, int num_vs, 
             float sim = (num_com_nbrs + 2) / std::sqrt((left_size + 1.0) * (right_size + 1.0));
             
             if (sim > ep) {
-                d_sim_nbrs[i][d_num_sim_nbrs[i]] = nbr_id;
+                d_sim_nbrs[left_start + d_num_sim_Nbrs[i]] = nbr_id;
                 d_num_sim_nbrs[i]++;
             }
         }
@@ -82,7 +83,7 @@ void cuda_scan(int num_vs, int num_es, int *nbr_offs, int *nbrs,
     // declare all of the variabled that will be used
     bool* h_pivots, *d_pivots;
     int* h_num_sim_nbrs, *d_num_sim_nbrs;
-    int** h_sim_nbrs, **d_sim_nbrs;
+    int* h_sim_nbrs, *d_sim_nbrs;
     
     // malloc for host and device variables
     size_t size_offs = (num_vs+1) * sizeof(int);
@@ -106,8 +107,8 @@ void cuda_scan(int num_vs, int num_es, int *nbr_offs, int *nbrs,
     cudaMalloc(&d_num_sim_nbrs, size_num);
     cudaMemset(d_num_sim_nbrs, 0, size_num);
     
-    h_sim_nbrs = (int**)malloc(size_sim);
-    cudaMalloc(&d_sim_nbrs, size_sim);
+    h_sim_nbrs = (int*)malloc(size_nbrs);
+    cudaMalloc(&d_sim_nbrs, size_nbrs);
     
     // copy the parameters to the device
     cudaMemcpy(d_nbr_offs, nbr_offs, size_offs, cudaMemcpyHostToDevice);
@@ -120,12 +121,14 @@ void cuda_scan(int num_vs, int num_es, int *nbr_offs, int *nbrs,
     // copy the pivots results back from the device
     cudaMemcpy(h_pivots, d_pivots, size_pivots, cudaMemcpyDeviceToHost);
     cudaMemcpy(h_num_sim_nbrs, d_num_sim_nbrs, size_num, cudaMemcpyDeviceToHost);
+    
+    cudaMemcpy(h_sim_nbrs, d_sim_nbrs, size_nbrs, cudaMemcpyDeviceToHost);
 //    cudaMemcpy(h_sim_nbrs, d_sim_nbrs, size_sim, cudaMemcpyDeviceToHost);
-    for (int i = 0; i < num_vs; ++i) {
-        int left_size = nbr_offs[i+1]-nbr_offs[i];
-        h_sim_nbrs[i] = (int*)malloc(left_size*sizeof(int));
-        cudaMemcpy(&h_sim_nbrs[i], &d_sim_nbrs[i], left_size*sizeof(int), cudaMemcpyDeviceToHost);
-    }
+//    for (int i = 0; i < num_vs; ++i) {
+//        int left_size = nbr_offs[i+1]-nbr_offs[i];
+//        h_sim_nbrs[i] = (int*)malloc(left_size*sizeof(int));
+//        cudaMemcpy(&h_sim_nbrs[i], &d_sim_nbrs[i], left_size*sizeof(int), cudaMemcpyDeviceToHost);
+//    }
     
     // for debug
     if (num_vs <= 50) {
@@ -140,8 +143,9 @@ void cuda_scan(int num_vs, int num_es, int *nbr_offs, int *nbrs,
         }
         for (int i = 0; i < num_vs; ++i) {
             std::cout << "node " << i << ": ";
+            int left_start = nbr_offs[i];
             for (int j = 0; j < h_num_sim_nbrs[i]; ++j) {
-                std::cout << h_sim_nbrs[i][j] << " ";
+                std::cout << h_sim_nbrs[left_start + j] << " ";
             }
             std::cout << endl;
         }
