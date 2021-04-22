@@ -60,7 +60,7 @@ void findPivots(int num_blocks_per_grid, int num_threads_per_block, int num_vs, 
             float sim = (num_com_nbrs + 2) / std::sqrt((left_size + 1.0) * (right_size + 1.0));
             
             if (sim > ep) {
-                d_sim_nbrs[left_start + d_num_sim_Nbrs[i]] = nbr_id;
+                d_sim_nbrs[left_start + d_num_sim_nbrs[i]] = nbr_id;
                 d_num_sim_nbrs[i]++;
             }
         }
@@ -92,7 +92,7 @@ void cuda_scan(int num_vs, int num_es, int *nbr_offs, int *nbrs,
     
     size_t size_pivots = num_vs * sizeof(bool);
     size_t size_num = num_vs * sizeof(int);
-    size_t size_sim = num_vs * sizeof(int*);
+//    size_t size_sim = num_vs * sizeof(int*);
     
     cudaMalloc(&d_nbr_offs, size_offs);
     cudaMalloc(&d_nbrs, size_nbrs);
