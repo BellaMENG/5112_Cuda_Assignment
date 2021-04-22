@@ -176,7 +176,10 @@ void cuda_scan(int num_vs, int num_es, int *nbr_offs, int *nbrs,
         num_clusters++;
     }
 
-    
+    for (int i = 0; i < num_vs; ++i) {
+        cout << cluster_result[i] << " ";
+    }
+    cout << endl;
     // free mem allocation
     
 }
