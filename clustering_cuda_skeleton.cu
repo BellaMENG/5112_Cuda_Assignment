@@ -43,6 +43,7 @@ void findPivots(int num_blocks_per_grid, int num_threads_per_block, int num_vs, 
         int left_size = left_end - left_start;
 
 //        d_sim_nbrs[i] = new int[left_size];
+//        cudaMalloc(&d_sim_nbrs[i], left_size*sizeof(int));
         d_sim_nbrs[i] = (int*)malloc(left_size * sizeof(int));
         // loop over all neighbors of i
         for (int j = left_start; j < left_end; j++) {
@@ -121,8 +122,9 @@ void cuda_scan(int num_vs, int num_es, int *nbr_offs, int *nbrs,
     cudaMemcpy(h_num_sim_nbrs, d_num_sim_nbrs, size_num, cudaMemcpyDeviceToHost);
 //    cudaMemcpy(h_sim_nbrs, d_sim_nbrs, size_sim, cudaMemcpyDeviceToHost);
     for (int i = 0; i < num_vs; ++i) {
-        h_sim_nbrs[i] = new int[h_num_sim_nbrs[i]];
-        cudaMemcpy(&h_sim_nbrs[i], &d_sim_nbrs[i], h_num_sim_nbrs[i]*sizeof(int), cudaMemcpyDeviceToHost);
+        int left_size = nbr_offs[i+1]-nbr_offs[i];
+        h_sim_nbrs[i] = (int*)malloc(left_size*sizeof(int));
+        cudaMemcpy(&h_sim_nbrs[i], &d_sim_nbrs[i], left_size*sizeof(int), cudaMemcpyDeviceToHost);
     }
     
     // for debug
