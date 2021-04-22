@@ -118,7 +118,10 @@ void cuda_scan(int num_vs, int num_es, int *nbr_offs, int *nbrs,
     // copy the pivots results back from the device
     cudaMemcpy(h_pivots, d_pivots, size_pivots, cudaMemcpyDeviceToHost);
     cudaMemcpy(h_num_sim_nbrs, d_num_sim_nbrs, size_num, cudaMemcpyDeviceToHost);
-    cudaMemcpy(h_sim_nbrs, d_sim_nbrs, size_nbrs, cudaMemcpyDeviceToHost);
+    cudaMemcpy(h_sim_nbrs, d_sim_nbrs, size_sim, cudaMemcpyDeviceToHost);
+//    for (int i = 0; i < num_vs; ++i) {
+//        cudaMemcpy(&h_sim_nbrs[i], &d_sim_nbrs[i], )
+//    }
     
     // for debug
     if (num_vs <= 50) {
