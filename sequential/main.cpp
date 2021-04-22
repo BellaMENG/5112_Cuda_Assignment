@@ -112,11 +112,12 @@ int main(int argc, char **argv) {
 
         num_clusters++;
     }
+    /*
     for (int i = 0; i < num_vs; ++i) {
         cout << cluster_result[i] << " ";
     }
     cout << endl;
-    
+    */
     auto end_clock = chrono::high_resolution_clock::now();
 
     chrono::duration<double> diff = end_clock - start_clock;

@@ -92,7 +92,6 @@ void cuda_scan(int num_vs, int num_es, int *nbr_offs, int *nbrs,
     
     // two steps: 1. find the pivots; 2. cluster and label the results
     int* d_nbr_offs, *d_nbrs;
-    int* d_cluster_result;
     
     // declare all of the variabled that will be used
     bool* h_pivots, *d_pivots;
@@ -102,7 +101,6 @@ void cuda_scan(int num_vs, int num_es, int *nbr_offs, int *nbrs,
     // malloc for host and device variables
     size_t size_offs = (num_vs+1) * sizeof(int);
     size_t size_nbrs = (num_es+1) * sizeof(int);
-    size_t size_results = num_vs * sizeof(int);
     
     size_t size_pivots = num_vs * sizeof(bool);
     size_t size_num = num_vs * sizeof(int);
@@ -111,7 +109,6 @@ void cuda_scan(int num_vs, int num_es, int *nbr_offs, int *nbrs,
     cudaMalloc(&d_nbr_offs, size_offs);
     cudaMalloc(&d_nbrs, size_nbrs);
     
-    cudaMalloc(&d_cluster_result, size_results);
     
     h_pivots = (bool*)calloc(num_vs, sizeof(bool));
     cudaMalloc(&d_pivots, size_pivots);
@@ -175,11 +172,19 @@ void cuda_scan(int num_vs, int num_es, int *nbr_offs, int *nbrs,
 
         num_clusters++;
     }
-
+/*
     for (int i = 0; i < num_vs; ++i) {
         cout << cluster_result[i] << " ";
     }
     cout << endl;
+ */
     // free mem allocation
-    
+    cudaFree(d_nbr_offs);
+    cudaFree(d_nbrs);
+    free(h_pivots);
+    cudaFree(d_pivots);
+    free(h_num_sim_nbrs);
+    cudaFree(d_num_sim_nbrs);
+    free(h_sim_nbrs);
+    cudaFree(d_sim_nbrs);
 }
