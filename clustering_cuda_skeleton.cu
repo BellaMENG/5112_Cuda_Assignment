@@ -171,7 +171,7 @@ void cuda_scan(int num_vs, int num_es, int *nbr_offs, int *nbrs,
 
         visited[i] = true;
         cluster_result[i] = i;
-        expansion(i, i, nbr_offs, h_num_sim_nbrs, h_sim_nbrs, visited, pivots, cluster_result);
+        expansion(i, i, nbr_offs, h_num_sim_nbrs, h_sim_nbrs, visited, h_pivots, cluster_result);
 
         num_clusters++;
     }
