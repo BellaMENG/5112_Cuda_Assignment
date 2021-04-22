@@ -118,10 +118,11 @@ void cuda_scan(int num_vs, int num_es, int *nbr_offs, int *nbrs,
     // copy the pivots results back from the device
     cudaMemcpy(h_pivots, d_pivots, size_pivots, cudaMemcpyDeviceToHost);
     cudaMemcpy(h_num_sim_nbrs, d_num_sim_nbrs, size_num, cudaMemcpyDeviceToHost);
-    cudaMemcpy(h_sim_nbrs, d_sim_nbrs, size_sim, cudaMemcpyDeviceToHost);
-//    for (int i = 0; i < num_vs; ++i) {
-//        cudaMemcpy(&h_sim_nbrs[i], &d_sim_nbrs[i], )
-//    }
+//    cudaMemcpy(h_sim_nbrs, d_sim_nbrs, size_sim, cudaMemcpyDeviceToHost);
+    for (int i = 0; i < num_vs; ++i) {
+        h_sim_nbrs[i] = new int[h_num_sim_nbrs[i]];
+        cudaMemcpy(&h_sim_nbrs[i], &d_sim_nbrs[i], h_num_sim_nbrs[i], cudaMemcpyDeviceToHost);
+    }
     
     // for debug
     if (num_vs <= 50) {
@@ -129,6 +130,11 @@ void cuda_scan(int num_vs, int num_es, int *nbr_offs, int *nbrs,
             std::cout << h_pivots[i] << " ";
         }
         std::cout << endl;
+        for (int i = 0; i < num_vs; ++i) {
+            std::cout << "node " << i << ": ";
+            cout << "num sim nbrs is " << h_num_sim_nbrs[i];
+            std::cout << endl;
+        }
         for (int i = 0; i < num_vs; ++i) {
             std::cout << "node " << i << ": ";
             for (int j = 0; j < h_num_sim_nbrs[i]; ++j) {
