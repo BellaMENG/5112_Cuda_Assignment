@@ -74,7 +74,7 @@ void expansion(int cur_id, int num_clusters, int *nbr_offs, int *num_sim_nbrs, i
                bool *visited, bool *pivots, int *cluster_result) {
     
     for (int i = 0; i < num_sim_nbrs[cur_id]; i++) {
-        int nbr_id = sim_nbrs[nbr_offs[i] + i];
+        int nbr_id = sim_nbrs[nbr_offs[cur_id] + i];
         if ((pivots[nbr_id])&&(!visited[nbr_id])){
             visited[nbr_id] = true;
             cluster_result[nbr_id] = num_clusters;
