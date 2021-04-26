@@ -131,6 +131,7 @@ void cuda_scan(int num_vs, int num_es, int *nbr_offs, int *nbrs,
     dim3 threads(num_threads_per_block);
 
     int nthread = num_blocks_per_grid * num_threads_per_block;
+    cout << nthread << endl;
     int start, end;
     // stage 1: find the pivot nodes
     for (int i = 0; i < num_vs/(nthread*100); ++i) {
@@ -147,6 +148,7 @@ void cuda_scan(int num_vs, int num_es, int *nbr_offs, int *nbrs,
         for (int i = 0; i < num_vs; ++i) {
             std::cout << h_pivots[i] << " ";
         }
+        cout << endl;
     }
     
 
