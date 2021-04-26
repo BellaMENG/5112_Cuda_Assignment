@@ -134,7 +134,7 @@ void cuda_scan(int num_vs, int num_es, int *nbr_offs, int *nbrs,
     cout << nthread << endl;
     int start, end;
     // stage 1: find the pivot nodes
-    for (int i = 0; i < num_vs/(nthread*100); ++i) {
+    for (int i = 0; i <= num_vs/(nthread*100); ++i) {
         cout << "i: " << i << endl;
         start = i*(nthread*100);
         end = (i + 1)*(nthread*100);
