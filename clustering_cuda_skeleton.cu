@@ -133,8 +133,13 @@ void cuda_scan(int num_vs, int num_es, int *nbr_offs, int *nbrs,
     int nthread = num_blocks_per_grid * num_threads_per_block;
     cout << nthread << endl;
     int start, end;
+    cudaEvent_t cuda_start, cuda_end;
+    cudaEventCreate(&cuda_start);
+    cudaEventCreate(&cuda_end);
     // stage 1: find the pivot nodes
     for (int i = 0; i <= num_vs/(nthread*50); ++i) {
+        cudaEventRecord(cuda_end);
+        cudaEventRecord(cuda_start);
         cout << "i: " << i << endl;
         start = i*(nthread*50);
         end = (i + 1)*(nthread*50);
