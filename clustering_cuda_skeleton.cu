@@ -133,9 +133,9 @@ void cuda_scan(int num_vs, int num_es, int *nbr_offs, int *nbrs,
     int nthread = num_blocks_per_grid * num_threads_per_block;
     int start, end;
     // stage 1: find the pivot nodes
-    for (int i = 0; i < num_vs/nthread; ++i) {
-        start = i*nthread;
-        end = (i + 1)*nthread;
+    for (int i = 0; i < num_vs/(nthread*100); ++i) {
+        start = i*(nthread*100);
+        end = (i + 1)*(nthread*100);
         if (end > num_vs)
             end = num_vs;
         findPivots<<<blocks, threads>>>(start, end, num_blocks_per_grid, num_threads_per_block, num_vs, num_es, epsilon, mu, d_nbr_offs, d_nbrs, d_pivots, d_num_sim_nbrs, d_sim_nbrs);
