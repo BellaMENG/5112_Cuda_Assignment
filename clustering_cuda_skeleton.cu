@@ -134,10 +134,10 @@ void cuda_scan(int num_vs, int num_es, int *nbr_offs, int *nbrs,
     cout << nthread << endl;
     int start, end;
     // stage 1: find the pivot nodes
-    for (int i = 0; i <= num_vs/(nthread*100); ++i) {
+    for (int i = 0; i <= num_vs/(nthread*50); ++i) {
         cout << "i: " << i << endl;
-        start = i*(nthread*100);
-        end = (i + 1)*(nthread*100);
+        start = i*(nthread*50);
+        end = (i + 1)*(nthread*50);
         if (end > num_vs)
             end = num_vs;
         findPivots<<<blocks, threads>>>(start, end, num_blocks_per_grid, num_threads_per_block, num_vs, num_es, epsilon, mu, d_nbr_offs, d_nbrs, d_pivots, d_num_sim_nbrs, d_sim_nbrs);
@@ -145,19 +145,19 @@ void cuda_scan(int num_vs, int num_es, int *nbr_offs, int *nbrs,
     // copy the pivots results back from the device
     
     // for debug
-    if (num_vs <= 50) {
-        for (int i = 0; i < num_vs; ++i) {
-            std::cout << h_pivots[i] << " ";
-        }
-        cout << endl;
-    }
     
 
     cudaMemcpy(h_pivots, d_pivots, size_pivots, cudaMemcpyDeviceToHost);
     cudaMemcpy(h_num_sim_nbrs, d_num_sim_nbrs, size_num, cudaMemcpyDeviceToHost);
     
     cudaMemcpy(h_sim_nbrs, d_sim_nbrs, size_nbrs, cudaMemcpyDeviceToHost);
-    
+    if (num_vs <= 50) {
+        for (int i = 0; i < num_vs; ++i) {
+            std::cout << h_pivots[i] << " ";
+        }
+        cout << endl;
+    }
+
 
     // stage 2: cluster. sequential version
     bool *visited = new bool[num_vs]();
