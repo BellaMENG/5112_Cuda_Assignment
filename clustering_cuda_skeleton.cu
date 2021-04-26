@@ -145,17 +145,8 @@ void cuda_scan(int num_vs, int num_es, int *nbr_offs, int *nbrs,
     // for debug
     if (num_vs <= 50) {
         for (int i = 0; i < num_vs; ++i) {
-            std::cout << pivots[i] << " ";
+            std::cout << h_pivots[i] << " ";
         }
-        cout << endl;
-        for (int i = 0; i < num_vs; ++i) {
-            std::cout << "node " << i << ": ";
-            for (int j = 0; j < num_sim_nbrs[i]; ++j) {
-                std::cout << sim_nbrs[i][j] << " ";
-            }
-            cout << endl;
-        }
-
     }
     
 
