@@ -76,9 +76,7 @@ int main(int argc, char **argv) {
 
             // compute the similarity
             int num_com_nbrs = get_num_com_nbrs(nbrs, left_start, left_end, right_start, right_end);
-
             float sim = (num_com_nbrs + 2) / std::sqrt((left_size + 1.0) * (right_size + 1.0));
-
             if (sim > epsilon) {
                 sim_nbrs[i][num_sim_nbrs[i]] = nbr_id;
                 num_sim_nbrs[i]++;
@@ -86,7 +84,23 @@ int main(int argc, char **argv) {
         }
         if (num_sim_nbrs[i] > mu) pivots[i] = true;
     }
+/*
+    // for debug
+    if (num_vs <= 50) {
+        for (int i = 0; i < num_vs; ++i) {
+            std::cout << pivots[i] << " ";
+        }
+        cout << endl;
+        for (int i = 0; i < num_vs; ++i) {
+            std::cout << "node " << i << ": ";
+            for (int j = 0; j < num_sim_nbrs[i]; ++j) {
+                std::cout << sim_nbrs[i][j] << " ";
+            }
+            cout << endl;
+        }
 
+    }
+*/
     // Stage 2:
     bool *visited = new bool[num_vs]();
     for (int i = 0; i < num_vs; i++) {
@@ -98,15 +112,19 @@ int main(int argc, char **argv) {
 
         num_clusters++;
     }
-
-
+    /*
+    for (int i = 0; i < num_vs; ++i) {
+        cout << cluster_result[i] << " ";
+    }
+    cout << endl;
+    */
     auto end_clock = chrono::high_resolution_clock::now();
 
     chrono::duration<double> diff = end_clock - start_clock;
     printf("Elapsed Time: %.9lf s\n", diff.count());
     printf("Number of clusters: %d\n", num_clusters);
 
-    string result_path("results/sequential.txt");
+    string result_path("../results/sequential.txt");
     write_result_to_file(num_vs, num_clusters, cluster_result, result_path);
 
     delete[] pivots;
