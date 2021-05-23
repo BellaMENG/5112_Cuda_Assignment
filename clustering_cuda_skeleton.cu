@@ -1,7 +1,7 @@
 /*
- * Name: MENG Zihan
- * Student id: 20412027
- * ITSC email: zmengaa@connect.ust.hk
+ * Name: #### ######
+ * Student id: #######
+ * ITSC email: ############
  *
  * COMPILE: nvcc -std=c++11 clustering_cuda_skeleton.cu clustering_impl.cpp main.cpp -o cuda
  * RUN:     ./cuda <path> <epsilon> <mu> <num_blocks_per_grid> <num_threads_per_block>
